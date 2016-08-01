@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bubbles</title>
+	<style>
+		#A1 {
+			margin: 0;
+			background: #0f0f0f;
+			max-width: 600px;
+		}
+		#A2 {
+			margin: 0;
+			background: #1c1c1c;
+			max-width: 600px;
+		}
+		#A3 {
+			margin: 0;
+			background: #292929;
+			max-width: 600px;
+		}
+		rect {
+			fill: none;
+			pointer-events: all;
+		}
+		circle {
+			fill: none;
+			stroke-width: 2.5px;
+		}
+		path{
+			stroke-width: 2.5px;
+			fill: none;
+		}
+	</style>
+	<script src="https://d3js.org/d3.v3.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+</head>
+<body>
+<div id="A1"></div>
+<div id="A2"></div>
+<div id="A3"></div>
+<script>
+$(document).ready(function(){
+	var width = 600,
+		height = 200;
+
+	var i = 0;
+
+	var svg = d3.select("#A1").append("svg")
+		.attr("width", width)
+		.attr("height", height);
+
+	svg.append("rect")
+		.attr("width", width)
+		.attr("height", height)
+		.on("ontouchstart" in document ? "touchmove" : "mousemove", particle);
+
+	function particle() {
+	  var m = d3.mouse(this);
+
+	  svg.insert("circle", "rect")
+		  .attr("cx", m[0])
+		  .attr("cy", m[1])
+		  .attr("r", 1e-6)
+		  .style("stroke", d3.hsl((i = (i + 1) % 360), 1, .5))
+		  .style("stroke-opacity", 1)
+		.transition()
+		  .duration(2000)
+		  .ease(Math.sqrt)
+		  .attr("r", 100)
+		  .style("stroke-opacity", 1e-6)
+		  .remove();
+
+	  d3.event.preventDefault();
+	}
+});
+$(document).ready(function(){
+	var width = 600,
+		height = 200;
+
+	var i = 0;
+
+	var svg = d3.select("#A2").append("svg")
+		.attr("width", width)
+		.attr("height", height);
+
+	svg.append("rect")
+		.attr("width", width)
+		.attr("height", height)
+		.on("ontouchstart" in document ? "touchmove" : "mousemove", particle);
+
+	function particle() {
+		var m = d3.mouse(this);
+		
+		var line = d3.svg.line()
+			.x(function(d) {return d.x;})
+			.y(function(d) {return d.y;})
+			.interpolate('linear-closed');
+		
+		var data1 = [
+					{x:m[0],y:m[1]+1e-6},
+					{x:m[0]-(1e-6)*1.73,y:m[1]+(1e-6)*0.5},
+					{x:m[0]+(1e-6)*1.73,y:m[1]+(1e-6)*0.5}
+				];
+		var data2 = [
+					{x:m[0],y:m[1]+150},
+					{x:m[0]-130,y:m[1]-75},
+					{x:m[0]+130,y:m[1]-75}
+				];
+				
+		svg.insert("path", "rect")    
+			.attr("d", line(data1))
+			.style("stroke", d3.hsl((i = (i + 1) % 360), 1, .5))
+			.style("stroke-opacity", 1)
+			.transition()
+			 .duration(2000)
+			 .attrTween("transform", function() { return d3.interpolateString('rotate('+ 0 +','+m[0]+','+m[1]+')', 'rotate('+ 90 +','+m[0]+','+m[1]+')'); })
+			 .ease(Math.sqrt)
+			 .attr('d', line(data2))
+			 .style("stroke-opacity", 1e-6)
+			 .remove();
+			 
+		d3.event.preventDefault();
+	}
+});
+$(document).ready(function(){
+	var width = 600,
+		height = 200;
+
+	var i = 0;
+
+	var svg = d3.select("#A3").append("svg")
+		.attr("width", width)
+		.attr("height", height);
+
+	svg.append("rect")
+		.attr("width", width)
+		.attr("height", height)
+		.on("ontouchstart" in document ? "touchmove" : "mousemove", particle);
+
+	function particle() {
+		var m = d3.mouse(this);
+		
+		var line = d3.svg.line()
+			.x(function(d) {return d.x;})
+			.y(function(d) {return d.y;})
+			.interpolate('linear');
+			
+		var x, y;
+		var data1 = [];
+		var data2 = [];
+		
+		for (var j = 0; j < 350; j++) {
+			t = j*0.1;
+			x = 16 * Math.pow(Math.sin(t),3);
+			y = 13 * Math.cos(t) - 5* Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)
+			data1.push({'x': m[0]+ x/10000, 'y': m[1]+y/10000 });
+			data2.push({'x': m[0]+ x*7, 'y': m[1]+y*7 });
+		}
+			
+		svg.insert("path", "rect")    
+			.attr("d", line(data1))
+			.style("stroke", d3.hsl((i = (i + 1) % 360), 1, .5))
+			.style("stroke-opacity", 1)
+			.transition()
+			 .duration(3000)
+			 .attrTween("transform", function() { return d3.interpolateString('rotate(160,'+m[0]+','+m[1]+')', 'rotate(180,'+m[0]+','+m[1]+')'); })
+			 .ease(Math.sqrt)
+			 .attr('d', line(data2))
+			 .style("stroke-opacity", 1e-6)
+			 .remove();
+			 
+		d3.event.preventDefault();
+	}
+});
+</script>
+</body>
+</html>
+
